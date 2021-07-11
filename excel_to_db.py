@@ -3,6 +3,7 @@ import psycopg2
 from sqlalchemy import create_engine
 import parameters
 import os.path
+import sys
 
 table_path = parameters.path
 table_name = parameters.name
@@ -42,7 +43,12 @@ try:
     # DB to Excel
     else:
         print(f'Converting {table_name} to the Excel file...')
-        table = pd.read_sql(table_name, engine)
+        try:
+            table = pd.read_sql(table_name, engine)
+        except(Exception) as err:
+            print(err)
+            print('\nProbably, there is no DB with this name.')
+            sys.exit()
 
         suffix = '_exported'
         name = table_path + table_name + suffix + table_extension
